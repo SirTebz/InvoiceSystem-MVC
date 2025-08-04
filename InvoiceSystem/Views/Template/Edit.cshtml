@@ -1,0 +1,74 @@
+﻿@model InvoiceSystem.ViewModels.InvoiceTemplateViewModel
+@{
+    ViewData["Title"] = "Edit Invoice Template";
+}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" novalidate>
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mb-3">
+                            <label asp-for="TemplateName" class="form-label fw-bold"></label>
+                            <input asp-for="TemplateName" class="form-control" placeholder="e.g., Order Completion Template" />
+                            <span asp-validation-for="TemplateName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TemplateType" class="form-label fw-bold"></label>
+                            <select asp-for="TemplateType"
+                                    class="form-select"
+                                    asp-items="Html.GetEnumSelectList<InvoiceSystem.Models.TemplateType>()">
+                                <option value="">-- Select Template Type --</option>
+                            </select>
+                            <span asp-validation-for="TemplateType" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="HtmlContent" class="form-label fw-bold"></label>
+<textarea asp-for="HtmlContent" id="HtmlContent" class="form-control" rows="10"></textarea>
+                            <span asp-validation-for="HtmlContent" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Update Template</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white text-center py-3">
+                    <h3 class="mb-0">Allowed Placeholders</h3>
+                </div>
+                <div class="card-body">
+                    <p>Use the following placeholders in your HTML template to dynamically insert order data:</p>
+                    <ul>
+                        <li><code>{CustomerName}</code> – Customer's full name.</li>
+                        <li><code>{OrderDate}</code> – Formatted order date.</li>
+                        <li><code>{OrderNumber}</code> – Unique order number.</li>
+                        <li><code>{OrderStatus}</code> – Current order status (Pending, Completed, Cancelled).</li>
+                        <li><code>{ProductList}</code> – List of ordered products.</li>
+                        <li><code>{TotalAmount}</code> – Total order amount in currency format.</li>
+                        <li><code>{PaymentStatus}</code> – Payment status (for Payment Success templates).</li>
+                        <li><code>{PaymentDate}</code> – Payment date (for Payment Success templates).</li>
+                        <li><code>{PaymentMethod}</code> – Payment method used (for Payment Success templates).</li>
+                    </ul>
+                    <p class="text-muted">
+                        Please ensure you use these placeholders exactly as shown (including curly braces) so they can be properly replaced when the invoice is generated.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <!-- Include CKEditor via CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.3.1/classic/ckeditor.js"></script>
+    <script>
+        // Initialize CKEditor on the textarea with id 'HtmlContent'
+        CKEDITOR.replace('HtmlContent');
+    </script>
+}

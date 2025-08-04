@@ -1,0 +1,167 @@
+﻿@model InvoiceSystem.ViewModels.OrderCreateViewModel
+@using InvoiceSystem.Models
+@{
+    ViewData["Title"] = "Place Order";
+    var products = ViewBag.Products as List<Product> ?? new List<Product>();
+}
+<div class="container" style="max-width: 900px;">
+    <div class="card my-5 shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title mb-0">@ViewData["Title"]</h3>
+        </div>
+        <div class="card-body">
+            @if (!products.Any())
+            {
+                <div class="alert alert-warning text-center" role="alert">
+                    No products available to order.
+                </div>
+            }
+            else
+            {
+                <!-- Informational message guiding user actions -->
+                <div class="alert alert-info" role="alert">
+                    <strong>Review your order before submitting.</strong><br />
+                    Use the <strong>+</strong> or <strong>-</strong> buttons to adjust quantities,
+                    and click <strong>Remove</strong> if you no longer want an item.
+                </div>
+                <!-- Begin Form -->
+                <form asp-action="Create" method="post">
+                    <table class="table table-bordered table-hover align-middle" id="orderTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>
+                                <th style="width: 200px;">Quantity</th>
+                                <th>Item Total</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < products.Count; i++)
+                            {
+                                var product = products[i];
+                                <tr data-index="@i" data-unit-price="@product.UnitPrice">
+                                    <!-- Product Name -->
+                                    <td class="fw-bold">
+                                        @product.ProductName
+                                        <input type="hidden" name="OrderItems[@i].ProductId" value="@product.Id" />
+                                    </td>
+                                    <!-- Unit Price -->
+                                    <td>
+                                        @product.UnitPrice.ToString("C")
+                                    </td>
+                                    <!-- Quantity with +/- buttons -->
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-start align-items-center">
+                                            <button type="button" class="btn btn-sm btn-secondary me-2 qty-minus">-</button>
+                                            <span class="quantity-val fw-bold">0</span>
+                                            <button type="button" class="btn btn-sm btn-secondary ms-2 qty-plus">+</button>
+                                        </div>
+                                        <!-- Hidden input to store final quantity for form submission -->
+                                        <input type="hidden" name="OrderItems[@i].Quantity" value="0" class="qty-input" />
+                                    </td>
+                                    <!-- Item Total -->
+                                    <td class="fw-bold">
+                                        <span class="item-total">0.00</span>
+                                    </td>
+                                    <!-- Remove Button -->
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-danger btn-sm remove-item">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!-- Grand Total Display -->
+                    <div class="d-flex justify-content-end align-items-center mb-3">
+                        <h4 class="me-2 mb-0">Grand Total: </h4>
+                        <h4 class="mb-0 text-success">₹<span id="grandTotal">0.00</span></h4>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Place Order</button>
+                    </div>
+                </form>
+                <!-- End Form -->
+            }
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // On DOM load, attach events
+        document.addEventListener("DOMContentLoaded", function () {
+        const table = document.getElementById("orderTable");
+        if (!table)
+            return;
+        const grandTotalEl = document.getElementById("grandTotal");
+
+        // Function to recalc item total
+        function recalcItem(row) {
+            const unitPrice = parseFloat(row.dataset.unitPrice);
+            const qtyInput = row.querySelector(".qty-input");
+            const qty = parseInt(qtyInput.value) || 0;
+            const itemTotal = unitPrice * qty;
+            // Update the item total cell
+            row.querySelector(".item-total").textContent = itemTotal.toFixed(2);
+        }
+
+        // Function to recalc the grand total for all items
+        function recalcGrandTotal() {
+            let grandTotal = 0;
+            const rows = table.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                const itemTotalEl = row.querySelector(".item-total");
+                if (itemTotalEl) {
+                    grandTotal += parseFloat(itemTotalEl.textContent) || 0;
+                }
+            });
+            grandTotalEl.textContent = grandTotal.toFixed(2);
+        }
+
+        // Recalc both item total and grand total
+        function recalcAll(row) {
+            recalcItem(row);
+            recalcGrandTotal();
+        }
+
+        // Event delegation for plus/minus/remove
+        table.addEventListener("click", function (e) {
+        const target = e.target;
+
+        // If user clicked minus
+        if (target.classList.contains("qty-minus")) {
+            const row = target.closest("tr");
+            const qtySpan = row.querySelector(".quantity-val");
+            const qtyInput = row.querySelector(".qty-input");
+            let currentQty = parseInt(qtyInput.value) || 0;
+            if (currentQty > 0)
+                currentQty--;
+            qtySpan.textContent = currentQty;
+            qtyInput.value = currentQty;
+            recalcAll(row);
+        }
+
+        // If user clicked plus
+        if (target.classList.contains("qty-plus")) {
+            const row = target.closest("tr");
+            const qtySpan = row.querySelector(".quantity-val");
+            const qtyInput = row.querySelector(".qty-input");
+            let currentQty = parseInt(qtyInput.value) || 0;
+            currentQty++;
+            qtySpan.textContent = currentQty;
+            qtyInput.value = currentQty;
+            recalcAll(row);
+        }
+
+        // If user clicked remove
+        if (target.classList.contains("remove-item")) {
+            const row = target.closest("tr");
+            row.remove(); // remove row from table
+            recalcGrandTotal(); // update total after removing
+        }
+        });
+        });
+    </script>
+}

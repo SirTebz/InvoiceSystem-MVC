@@ -1,0 +1,99 @@
+﻿@model InvoiceSystem.Models.Order
+@{
+    ViewData["Title"] = "Order Placed";
+    // Determine header message based on OrderStatus
+    string headerMessage = "";
+    string headerSubMessage = "";
+    string headerBg = "";
+    string totalTextClass = "";
+    if (Model.OrderStatus.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+    {
+        headerMessage = "Order Placed Successfully!";
+        headerSubMessage = "Thank you for your purchase.";
+        headerBg = "linear-gradient(90deg, #28a745, #218838)";
+        totalTextClass = "text-success";
+    }
+    else if (Model.OrderStatus.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+    {
+        headerMessage = "Order Cancelled";
+        headerSubMessage = "We're sorry, your order has been cancelled.";
+        headerBg = "linear-gradient(90deg, #dc3545, #c82333)";
+        totalTextClass = "text-danger";
+    }
+    else // Pending or any other status
+    {
+        headerMessage = "Order Pending Payment";
+        headerSubMessage = "Your order is awaiting payment confirmation.";
+        headerBg = "linear-gradient(90deg, #ffc107, #e0a800)";
+        totalTextClass = "text-warning";
+    }
+}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-center py-4" style="background: @headerBg; color:#fff;">
+                    <h2 class="mb-0" style="font-size: 2rem; font-weight:700;">@headerMessage</h2>
+                    <p class="lead mb-0" style="font-size:1.2rem;">@headerSubMessage</p>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Order Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <h6 class="text-uppercase text-muted">Order Number</h6>
+                            <p class="fs-5 mb-0">@Model.OrderNumber</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 class="text-uppercase text-muted">Order Date</h6>
+                            <p class="fs-5 mb-0">@Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h6 class="text-uppercase text-muted">Status</h6>
+                            <p class="fs-5 mb-0">@Model.OrderStatus</p>
+                        </div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <h6 class="text-uppercase text-muted">Total Amount</h6>
+                        <p class="display-6 @totalTextClass mb-0">@Model.TotalAmount.ToString("C")</p>
+                    </div>
+                    <hr />
+                    <!-- Order Items -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Order Items</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-end">Unit Price</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>@item.Product.ProductName</td>
+                                            <td class="text-center">@item.Quantity</td>
+                                            <td class="text-end">@item.UnitPrice.ToString("C")</td>
+                                            <td class="text-end">@item.Total.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-3 text-center">
+                    <a class="btn btn-primary me-2" href="@Url.Action("GenerateInvoice", "Order", new { orderId = Model.Id, sendEmail = false })">
+                        Download Invoice
+                    </a>
+                    <a class="btn btn-secondary" href="@Url.Action("Index", "Order")">
+                        Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

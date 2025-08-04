@@ -1,0 +1,50 @@
+﻿@model IEnumerable<InvoiceSystem.Models.Template>
+@{
+    ViewData["Title"] = "Invoice Templates";
+}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 text-end">
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Create New Template
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Template Name</th>
+                            <th>Type</th>
+                            <th>Created Date</th>
+                            <th>Created By</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var template in Model)
+                        {
+                            <tr>
+                                <td>@template.TemplateName</td>
+                                <td>@template.TemplateType</td>
+                                <td>@template.CreatedDate.ToString("g")</td>
+                                <td>@template.CreatedBy</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@template.id" class="btn btn-sm btn-primary me-1">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@template.id" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

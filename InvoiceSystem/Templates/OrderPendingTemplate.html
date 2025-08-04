@@ -1,0 +1,54 @@
+﻿<html>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#f7f7f7;">
+    <div style="max-width:800px; margin:30px auto; background:#ffffff; border:1px solid #e0e0e0; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+        <!-- Header -->
+        <div style="padding:20px; border-bottom:1px solid #e0e0e0; text-align:center;">
+            <h1 style="margin:0; font-size:28px; color:#ffc107;">Invoice</h1>
+            <p style="margin:5px 0; font-size:16px; color:#ffc107;">Order Pending</p>
+        </div>
+        <!-- Order Details -->
+        <div style="padding:20px;">
+            <table style="width:100%; margin-bottom:20px;">
+                <tr>
+                    <td style="font-size:16px; padding:5px 0; width:35%;"><strong>Customer Name:</strong></td>
+                    <td style="font-size:16px; padding:5px 0;">{CustomerName}</td>
+                </tr>
+                <tr>
+                    <td style="font-size:16px; padding:5px 0;"><strong>Order Date:</strong></td>
+                    <td style="font-size:16px; padding:5px 0;">{OrderDate}</td>
+                </tr>
+                <tr>
+                    <td style="font-size:16px; padding:5px 0;"><strong>Order Number:</strong></td>
+                    <td style="font-size:16px; padding:5px 0;">{OrderNumber}</td>
+                </tr>
+                <tr>
+                    <td style="font-size:16px; padding:5px 0;"><strong>Status:</strong></td>
+                    <td style="font-size:16px; padding:5px 0;">{OrderStatus}</td>
+                </tr>
+            </table>
+            <!-- Product Details -->
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f2f2f2;">
+                        <th style="padding:12px; border:1px solid #ddd; text-align:left;">Product</th>
+                        <th style="padding:12px; border:1px solid #ddd; text-align:left;">Quantity</th>
+                        <th style="padding:12px; border:1px solid #ddd; text-align:left;">Unit Price</th>
+                        <th style="padding:12px; border:1px solid #ddd; text-align:left;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ProductList}
+                </tbody>
+            </table>
+            <!-- Total -->
+            <p style="text-align:right; font-size:20px; font-weight:bold; color:#ffc107; margin-top:20px;">Total: {TotalAmount}</p>
+        </div>
+        <!-- Footer -->
+        <div style="padding:15px; border-top:1px solid #e0e0e0; text-align:center; font-size:14px; color:#777;">
+            <p style="margin:0;">Your order is pending payment confirmation.</p>
+            <p style="margin:0;">Please complete the payment to process your order.</p>
+            <p style="margin:0;">My Estore App</p>
+        </div>
+    </div>
+</body>
+</html>
